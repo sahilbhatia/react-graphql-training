@@ -3,6 +3,7 @@ import { gql } from "apollo-boost";
 import { useMutation } from "@apollo/react-hooks";
 
 import UsersSegments from "./UsersSegments.js";
+import { usersListQuery } from "./UsersList.js";
 
 const createUserMutation = gql`
   mutation CreateUserMutation(
@@ -36,6 +37,29 @@ function CreateUser({ backAction }) {
         firstName: formData.get("firstName"),
         lastName: formData.get("lastName"),
         email: formData.get("email"),
+      },
+      update: (client, { data: response }) => {
+        const data = client.readQuery({
+          query: usersListQuery,
+          variables: { limit: 5, offset: 0 },
+        });
+
+        const newData = {
+          users: data.users.concat(response.user.returning[0]),
+          users_aggregate: {
+            __typename: "test_users_aggregate",
+            aggregate: {
+              __typename: "test_users_aggregate_fields",
+              count: data.users_aggregate.aggregate.count + 1,
+            },
+          },
+        };
+
+        client.writeQuery({
+          query: usersListQuery,
+          variables: { limit: 5, offset: 0 },
+          data: newData,
+        });
       },
     });
   };

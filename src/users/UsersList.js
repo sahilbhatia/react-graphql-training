@@ -6,7 +6,7 @@ import UsersSegments from "./UsersSegments.js";
 import UserDetails from "./UserDetails.js";
 import CreateUser from "./CreateUser.js";
 
-const usersListQuery = gql`
+export const usersListQuery = gql`
   query Users($limit: Int, $offset: Int) {
     users: test_users(limit: $limit, offset: $offset) {
       ...userAttrsFragment
