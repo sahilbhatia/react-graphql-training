@@ -22,39 +22,20 @@ const createUserMutation = gql`
 `;
 
 function CreateUser({ backAction }) {
-  const [firstName, setFirstName] = React.useState();
-  const [lastName, setLastName] = React.useState();
-  const [email, setEmail] = React.useState();
   const [addUser, { data, loading: isLoading, error }] = useMutation(
     createUserMutation
   );
 
-  const handleTextChange = (evt) => {
-    const val = evt.target.value;
-
-    switch (evt.target.name) {
-      case "firstName":
-        setFirstName(val);
-        break;
-      case "lastName":
-        setLastName(val);
-        break;
-      case "email":
-        setEmail(val);
-        break;
-      default:
-      // do nothing
-    }
-  };
-
   const handleFormSubmit = (evt) => {
     evt.preventDefault();
 
+    const formData = new FormData(evt.target);
+
     addUser({
       variables: {
-        firstName,
-        lastName,
-        email,
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        email: formData.get("email"),
       },
     });
   };
@@ -89,28 +70,13 @@ function CreateUser({ backAction }) {
     <>
       <form onSubmit={handleFormSubmit}>
         <label>First name: </label>
-        <input
-          type="text"
-          name="firstName"
-          value={firstName}
-          onChange={handleTextChange}
-        />
+        <input type="text" name="firstName" />
 
         <label>Last name: </label>
-        <input
-          type="text"
-          name="lastName"
-          value={lastName}
-          onChange={handleTextChange}
-        />
+        <input type="text" name="lastName" />
 
         <label>Email: </label>
-        <input
-          type="text"
-          name="email"
-          value={email}
-          onChange={handleTextChange}
-        />
+        <input type="text" name="email" />
 
         <input type="submit" value="Submit" />
       </form>
